@@ -1,0 +1,300 @@
+---
+title: "RashPy"
+output: pdf_document
+date: "2025-06-29"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Data importing
+
+```{r include=FALSE}
+library(readr)
+library(tidyverse)
+
+datadf     <- read_csv("Dataset2020_2024_PHQ4_Rashomon.csv")
+
+datadf     <- datadf |>
+  mutate(date_parsed     = as.POSIXct(date_modified, format = "%m/%d/%Y %I:%M:%S %p"),
+         weekday_weekend = ifelse(weekdays(date_parsed) %in% c("Saturday", "Sunday"), "Weekend", "Weekday"),
+         hour_numeric    = as.numeric(format(date_parsed, "%H")) + as.numeric(format(date_parsed, "%M")) / 60)
+
+datadf     <- datadf[datadf$sex != "Other",]
+datadf$sex <- factor(datadf$sex)
+
+datadf <- datadf |> mutate(PHQ2_score_cat = ifelse(PHQ2_score >= 3, 1, 0))
+datadf <- datadf |> mutate(GAD2_score_cat = ifelse(GAD2_score >= 3, 1, 0))
+```
+
+
+## Partial Dependence Profile Explanations
+
+Partial dependence profiles (PDPs) allow for a comparative examination of how a model outputs to a specific variable across different subgroups. These profiles show how a selected variable influences the model's output using group-level average predictions. For example, when the relationship between the model’s predicted `scores` and the `age` variable is plotted separately for `Weekday` and `Weekend` groups, it becomes possible to visualize how this relationship varies by group. Parallel curves suggest that the model predicts similar `scores` across groups as `age` changes, while vertical separations between the curves or differences in their slope and shape indicate that the model responds differently to `age` depending on the group, revealing distinct patterns in how `scores` vary with `age`.
+
+In the following sections, the PDPs of the trained model on the intended response variable such as `PHQ2`, `GAD2`, and `PHQ4` are given. These profiles are compared the independent variables `education`, `sex`, `weekday_weekend`.
+
+## 2.1. Relationships by part of the week
+
+### 2.1.1. The age vs. PHQ2
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(DALEX)
+library(randomForest)
+library(modelStudio)
+
+model <- randomForest(factor(PHQ2_score_cat) ~ age + education + sex + weekday_weekend + hour_numeric, 
+                      data = datadf)
+modelex <- explain(model, data = datadf[,c(8, 9, 10, 11, 15, 16)], 
+                   y = datadf$PHQ2_score_cat)
+
+p1 <- plot(model_profile(modelex, variables = "age", groups = "weekday_weekend")) + ggtitle("PHQ2") + 
+  geom_rug(sides = "b")  +
+  scale_color_manual(labels = c("randomForest_Weekday" = "Weekday", 
+                                "randomForest_Weekend" = "Weekend"),
+                     values = c("randomForest_Weekday" = "red", 
+                                "randomForest_Weekend" = "blue"),
+                     name   = "")
+p1
+```
+
+
+### 2.1.2. The age vs. GAD2
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+model <- randomForest(factor(GAD2_score_cat) ~ age + education + sex + weekday_weekend + hour_numeric, 
+                      data = datadf)
+modelex <- explain(model, data = datadf[,c(8, 9, 10, 11, 15, 16)], 
+                   y = datadf$GAD2_score_cat)
+
+p2 <- plot(model_profile(modelex, variables = "age", groups = "weekday_weekend")) + ggtitle("GAD2") + 
+  geom_rug(sides = "b") +
+  scale_color_manual(labels = c("randomForest_Weekday" = "Weekday", 
+                                "randomForest_Weekend" = "Weekend"),
+                     values = c("randomForest_Weekday" = "red", 
+                                "randomForest_Weekend" = "blue"),
+                     name   = "")
+p2
+```
+
+### 2.1.3. The hour vs. PHQ2
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(DALEX)
+library(randomForest)
+library(modelStudio)
+
+model <- randomForest(factor(PHQ2_score_cat) ~ age + education + sex + weekday_weekend + hour_numeric, 
+                      data = datadf)
+modelex <- explain(model, data = datadf[,c(8, 9, 10, 11, 15, 16)], 
+                   y = datadf$PHQ2_score_cat)
+
+p4 <- plot(model_profile(modelex, variables = "hour_numeric", groups = "weekday_weekend")) + ggtitle("PHQ2") + 
+  geom_rug(sides = "b") +
+  scale_color_manual(labels = c("randomForest_Weekday" = "Weekday", 
+                                "randomForest_Weekend" = "Weekend"),
+                     values = c("randomForest_Weekday" = "red", 
+                                "randomForest_Weekend" = "blue"),
+                     name   = "") 
+p4
+```
+
+
+### 2.1.4. The hour vs. GAD2
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+model <- randomForest(factor(GAD2_score_cat) ~ age + education + sex + weekday_weekend + hour_numeric, 
+                      data = datadf)
+modelex <- explain(model, data = datadf[,c(8, 9, 10, 11, 15, 16)], 
+                   y = datadf$GAD2_score_cat)
+
+p5 <- plot(model_profile(modelex, variables = "hour_numeric", groups = "weekday_weekend")) + ggtitle("GAD2") + 
+  geom_rug(sides = "b") +
+  scale_color_manual(labels = c("randomForest_Weekday" = "Weekday", 
+                                "randomForest_Weekend" = "Weekend"),
+                     values = c("randomForest_Weekday" = "red", 
+                                "randomForest_Weekend" = "blue"),
+                     name   = "") 
+p5
+```
+
+
+## 2.2. Relationships by education levels
+
+### 2.2.1. The age vs. PHQ2
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(DALEX)
+library(randomForest)
+library(modelStudio)
+
+model <- randomForest(factor(PHQ2_score_cat) ~ age + education + sex + weekday_weekend + hour_numeric, 
+                      data = datadf)
+modelex <- explain(model, data = datadf[,c(8, 9, 10, 11, 15, 16)], 
+                   y = datadf$PHQ2_score_cat)
+
+p1 <- plot(model_profile(modelex, variables = "age", groups = "education")) + ggtitle("PHQ2") + 
+  geom_rug(sides = "b") +
+  scale_color_manual(labels = c("randomForest_1" = "1", 
+                                "randomForest_2" = "2",
+                                "randomForest_3" = "3"),
+                     values = c("randomForest_1" = "#c6dbef", 
+                                "randomForest_2" = "#6baed6", 
+                                "randomForest_3" = "#08306b"),
+                     name   = "")
+p1
+```
+
+
+### 2.2.2. The age vs. GAD2
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+model <- randomForest(factor(GAD2_score_cat) ~ age + education + sex + weekday_weekend + hour_numeric, 
+                      data = datadf)
+modelex <- explain(model, data = datadf[,c(8, 9, 10, 11, 15, 16)], 
+                   y = datadf$GAD2_score_cat)
+
+p2 <- plot(model_profile(modelex, variables = "age", groups = "education")) + ggtitle("GAD2") + 
+  geom_rug(sides = "b") +
+  scale_color_manual(labels = c("randomForest_1" = "1", 
+                                "randomForest_2" = "2",
+                                "randomForest_3" = "3"),
+                     values = c("randomForest_1" = "#c6dbef", 
+                                "randomForest_2" = "#6baed6", 
+                                "randomForest_3" = "#08306b"),
+                     name   = "") 
+p2
+```
+
+
+### 2.2.3. The hour vs. PHQ2
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(DALEX)
+library(randomForest)
+library(modelStudio)
+
+model <- randomForest(factor(PHQ2_score_cat) ~ age + education + sex + weekday_weekend + hour_numeric, 
+                      data = datadf)
+modelex <- explain(model, data = datadf[,c(8, 9, 10, 11, 15, 16)], 
+                   y = datadf$PHQ2_score_cat)
+
+p4 <- plot(model_profile(modelex, variables = "hour_numeric", groups = "education")) + ggtitle("PHQ2") + 
+  geom_rug(sides = "b") +
+  scale_color_manual(labels = c("randomForest_1" = "1", 
+                                "randomForest_2" = "2",
+                                "randomForest_3" = "3"),
+                     values = c("randomForest_1" = "#c6dbef", 
+                                "randomForest_2" = "#6baed6", 
+                                "randomForest_3" = "#08306b"),
+                     name   = "") 
+p4
+```
+
+
+### 2.2.4. The hour vs. GAD2
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+model <- randomForest(factor(GAD2_score_cat) ~ age + education + sex + weekday_weekend + hour_numeric, 
+                      data = datadf)
+modelex <- explain(model, data = datadf[,c(8, 9, 10, 11, 15, 16)], 
+                   y = datadf$GAD2_score_cat)
+
+p5 <- plot(model_profile(modelex, variables = "hour_numeric", groups = "education")) + ggtitle("GAD2") + 
+  geom_rug(sides = "b") +
+  scale_color_manual(labels = c("randomForest_1" = "1", 
+                                "randomForest_2" = "2",
+                                "randomForest_3" = "3"),
+                     values = c("randomForest_1" = "#c6dbef", 
+                                "randomForest_2" = "#6baed6", 
+                                "randomForest_3" = "#08306b"),
+                     name   = "") 
+p5
+```
+
+
+## 2.3. Relationships by gender
+
+### 2.3.1. The age vs. PHQ2
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(DALEX)
+library(randomForest)
+library(modelStudio)
+
+model <- randomForest(factor(PHQ2_score_cat) ~ age + education + sex + weekday_weekend + hour_numeric, 
+                      data = datadf)
+modelex <- explain(model, data = datadf[,c(8, 9, 10, 11, 15, 16)], 
+                   y = datadf$PHQ2_score_cat)
+
+p1 <- plot(model_profile(modelex, variables = "age", groups = "sex")) + ggtitle("PHQ2") + 
+  geom_rug(sides = "b") +
+  scale_color_manual(labels = c("randomForest_1" = "1", 
+                                "randomForest_2" = "2"),
+                     values = c("randomForest_1" = "red", 
+                                "randomForest_2" = "blue"),
+                     name   = "")  
+p1
+```
+
+
+### 2.3.2. The age vs. GAD2
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+model <- randomForest(factor(GAD2_score_cat) ~ age + education + sex + weekday_weekend + hour_numeric, 
+                      data = datadf)
+modelex <- explain(model, data = datadf[,c(8, 9, 10, 11, 15, 16)], 
+                   y = datadf$GAD2_score_cat)
+
+p2 <- plot(model_profile(modelex, variables = "age", groups = "sex")) + ggtitle("GAD2") + 
+  geom_rug(sides = "b") +
+  scale_color_manual(labels = c("randomForest_1" = "1", 
+                                "randomForest_2" = "2"),
+                     values = c("randomForest_1" = "red", 
+                                "randomForest_2" = "blue"),
+                     name   = "")   
+p2
+```
+
+
+### 2.3.3. The hour vs. PHQ2
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(DALEX)
+library(randomForest)
+library(modelStudio)
+
+model <- randomForest(factor(PHQ2_score_cat) ~ age + education + sex + weekday_weekend + hour_numeric, 
+                      data = datadf)
+modelex <- explain(model, data = datadf[,c(8, 9, 10, 11, 15, 16)], 
+                   y = datadf$PHQ2_score_cat)
+
+p4 <- plot(model_profile(modelex, variables = "hour_numeric", groups = "sex")) + ggtitle("PHQ2") + 
+  geom_rug(sides = "b") +
+  scale_color_manual(labels = c("randomForest_1" = "1", 
+                                "randomForest_2" = "2"),
+                     values = c("randomForest_1" = "red", 
+                                "randomForest_2" = "blue"),
+                     name   = "")   
+p4
+```
+
+
+### 2.3.4. The hour vs. GAD2
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+model <- randomForest(factor(GAD2_score_cat) ~ age + education + sex + weekday_weekend + hour_numeric, 
+                      data = datadf)
+modelex <- explain(model, data = datadf[,c(8, 9, 10, 11, 15, 16)], 
+                   y = datadf$GAD2_score_cat)
+
+p5 <- plot(model_profile(modelex, variables = "hour_numeric", groups = "sex")) + ggtitle("GAD2") + 
+  geom_rug(sides = "b") +
+  scale_color_manual(labels = c("randomForest_1" = "1", 
+                                "randomForest_2" = "2"),
+                     values = c("randomForest_1" = "red", 
+                                "randomForest_2" = "blue"),
+                     name   = "")   
+p5
+```
