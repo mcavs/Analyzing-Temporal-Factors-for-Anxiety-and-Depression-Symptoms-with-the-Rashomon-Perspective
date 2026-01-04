@@ -2,13 +2,6 @@
 
 This repository contains the scripts, results, and plots to reproduce the paper "Analyzing Temporal Factors for Anxiety and Depression Symptoms with the Rashomon Perspective".
 
-## Repository Structure
-
-```
-# Analyzing the Temporal Factors for Anxiety and Depression Symptoms with the Rashomon Perspective
-
-This repository contains the source code, data processing scripts, and raw results for our research on the **Rashomon Effect** in public mental health screening. The study utilizes over 34,000 PHQ-4 records to analyze how demographic and temporal factors influence anxiety and depression risk through the lens of predictive multiplicity.
-
 ## 📂 Repository Structure
 
 The project is organized into the following directory structure to ensure reproducibility:
