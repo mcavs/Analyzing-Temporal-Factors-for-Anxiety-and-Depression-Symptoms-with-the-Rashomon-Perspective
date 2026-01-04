@@ -49,9 +49,11 @@ Run scripts/03_tables_figures.R. This script accesses the .rds files to generate
 
 📊 Key Findings
 
-[](https://github.com/mcavs/RashPy/blob/main/plots/GAD2.png)
-[](https://github.com/mcavs/RashPy/blob/main/plots/PHQ2.png)
+![](https://github.com/mcavs/RashPy/blob/main/plots/GAD2.png)
+**Figure 1.** The Grouped PDPs for GAD-2 Risk Across the Factors. They illustrate the model-predicted relationship between the plotted factors and the estimated probability of the GAD-2 score being greater than 3. The lines represent the predicted probability values, and the surrounding bands indicate the 95% confidence intervals. Non-overlapping confidence intervals between groups suggest differences in predicted risk.
 
+![](https://github.com/mcavs/RashPy/blob/main/plots/PHQ2.png)
+**Figure 2.** The Grouped PDPs for the PHQ-2 Risk Across the Factors. They illustrate the model-predicted relationship between the plotted factors and the estimated probability of the PHQ-2 score being greater than 3. The lines represent the predicted probability values, and the surrounding bands indicate the 95% confidence intervals. Non-overlapping confidence intervals between groups suggest differences in predicted risk.
 
 ## Citation
 
