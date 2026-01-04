@@ -28,30 +28,31 @@ The project is organized into the following directory structure to ensure reprod
 ```
 
 🛠️ Installation
+
 To reproduce the analysis, you need R (>= 4.0.0) and the following libraries:
+
 ```
 install.packages(c("tidyverse", "DALEX", "randomForest", "dplyr", "ggplot2", "readr"))
 ```
 
 🚀 Usage
+
 1. Reproducing the Analysis
 If you wish to re-run the entire model training and profiling process (which uses 100 bootstrap iterations and may be computationally intensive):
 
 Run ```scripts/02_real_data_analysis.R```.
 
 2. Reproducing Figures and Tables
+
 The repository provides pre-calculated .rds files in raw results/ to allow for immediate reproduction of figures without re-training:
 
 Run scripts/03_tables_figures.R. This script accesses the .rds files to generate the grouped PDP plots seen in the paper.
 
 📊 Key Components
-Scripts
-Analysis Modules: Each script (e.g., age_vs_education_for_GAD2.R) performs a specific subgroup analysis using the Rashomon perspective (Bootstrap + PDP).
 
-Simulation: 01_simulation.R validates the stability of the Rashomon set in a controlled environment.
-
-Raw Results (RDS)
-The .rds files store the aggregated profile data (means, quantiles, and standard deviations) calculated from the model ensemble. These files are essential for visualizing the "Rashomon PDPs with confidence intervals".
+- scripts
+- rds
+- plots
 
 ## Citation
 
