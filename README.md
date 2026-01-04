@@ -37,12 +37,11 @@ install.packages(c("tidyverse", "DALEX", "randomForest", "dplyr", "ggplot2", "re
 
 🚀 Usage
 
-1. Reproducing the Analysis
+  1. Reproducing the Analysis
 If you wish to re-run the entire model training and profiling process (which uses 100 bootstrap iterations and may be computationally intensive):
-
 Run ```scripts/02_real_data_analysis.R```.
 
-2. Reproducing Figures and Tables
+  2. Reproducing Figures and Tables
 
 The repository provides pre-calculated .rds files in raw results/ to allow for immediate reproduction of figures without re-training:
 
