@@ -47,11 +47,11 @@ The repository provides pre-calculated .rds files in raw results/ to allow for i
 
 Run scripts/03_tables_figures.R. This script accesses the .rds files to generate the grouped PDP plots seen in the paper.
 
-📊 Key Components
+📊 Key Findings
 
-- scripts
-- rds
-- plots
+[](https://github.com/mcavs/RashPy/blob/main/plots/GAD2.png)
+[](https://github.com/mcavs/RashPy/blob/main/plots/PHQ2.png)
+
 
 ## Citation
 
